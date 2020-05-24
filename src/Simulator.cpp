@@ -2,6 +2,7 @@
 #include <Eigen>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include "Simulator.h"
 #include "Parameters.h"
 
@@ -51,7 +52,7 @@ void Simulator::projectPressure() {
 	cg.compute(A);
 	p_vec = cg.solve(rhs);
 	/* Load data into pressure grid */
-	p_grid.loadFromVector(active_cells, p_vec);
+	p_grid.loadFromVector(N, p_vec);
 }
 
 void Simulator::advectVelocity() {
@@ -73,6 +74,60 @@ void Simulator::advectVelocity() {
 	}
 }
 
+void Simulator::loadData() {
+	std::ifstream myfile;
+	std::string s, str;
+	int i;
+	myfile.open("../config.txt");
+
+	// get res and dx from file
+	str.clear();
+	getline(myfile, s);
+	for (i = 11; i < s.length(); i++)
+		str.push_back(s[i]);
+	res = stoi(str);
+	dx = 1.0 / res;
+
+	// get dt from file
+	str.clear();
+	getline(myfile, s);
+	for (i = 8; i < s.length(); i++)
+		str.push_back(s[i]);
+	dt = stod(str);
+
+	// get frame dt from file
+	str.clear();
+	getline(myfile, s);
+	for (i = 11; i < s.length(); i++)
+		str.push_back(s[i]);
+	int frame_rate = stoi(str);
+	frame_num = 0;
+	frame_dt = 1.0 / double(frame_rate);
+
+	// get gravity from file
+	str.clear();
+	getline(myfile, s);
+	for (i = 8; i < s.length(); i++)
+		str.push_back(s[i]);
+	gravity = stod(str);
+
+	// get end_t from file
+	str.clear();
+	getline(myfile, s);
+	for (i = 6; i < s.length(); i++)
+		str.push_back(s[i]);
+	end_t = stod(str);
+
+	// get num_frames from file
+	str.clear();
+	getline(myfile, s);
+	for (i = 6; i < s.length(); i++)
+		str.push_back(s[i]);
+	end_t = stod(str);
+
+	myfile.close();
+}
+
 void Simulator::writeData() {
 	std::ofstream myfile;
 	std::ostringstream filename;
@@ -86,12 +141,13 @@ void Simulator::writeData() {
 		grid_index = p_grid.id_list(p);
 		i = grid_index[0];
 		j = grid_index[1];
-		myfile << std::scientific << std::setprecision(16) << p_grid.origin[0] + i * p_grid.dx << ' ' << p_grid.origin[1] + j * p_grid.dx << ' ' << p_grid.data[p] << ' ' << u_grid.data[p] << ' ' << v_grid.data[p] << endl;
+		myfile << std::scientific << std::setprecision(16) << p_grid.origin[0] + i * p_grid.dx << ' ' << p_grid.origin[1] + j * p_grid.dx << ' ' << p_grid.data[p] << ' ' << u_grid.data[p] << ' ' << v_grid.data[p] << std::endl;
 	}
 	myfile.close();
 }
 
 void Simulator::init() {
+	loadData();
 	t = 0;
 	frame = 1;
 	dx = double(1) / double(res);
@@ -106,6 +162,9 @@ void Simulator::advanceOneTimeStep() {
 		writeData();				// write data for each frame
 		frame++;					// increase frame number
 	}
+}
+
+void applyBC() {
 }
 
 double Simulator::getTime() {

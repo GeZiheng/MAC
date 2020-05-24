@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc, char **argv) {
 	Simulator sim;
 	sim.init();
-	while (sim.getTime() < end_t)
+	while (sim.getTime() < sim.end_t)
 		sim.advanceOneTimeStep();
 	return 0;
 }
