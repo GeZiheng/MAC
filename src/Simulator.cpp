@@ -4,7 +4,6 @@
 #include <sstream>
 #include "Simulator.h"
 #include "Parameters.h"
-#include "Functions.h"
 
 using namespace Eigen;
 
@@ -75,19 +74,19 @@ void Simulator::advectVelocity() {
 }
 
 void Simulator::writeData() {
-	ofstream myfile;
-	ostringstream filename;
+	std::ofstream myfile;
+	std::ostringstream filename;
 	int N = p_grid.active_cells;					// number of fluid cells
 	Index grid_index;
 	int i, j, q;
-	filename << "../output/frame" << setfill('0') << setw(4) << frame_num << ".dat";
+	filename << "../output/frame" << std::setfill('0') << std::setw(4) << frame_num << ".dat";
 	myfile.open(filename.str());
-	myfile << "variables=\"x\",\"y\",\"p\",\"u\",\"v\"" << endl;
+	myfile << "variables=\"x\",\"y\",\"p\",\"u\",\"v\"" << std:: endl;
 	for (int p = 0; p < N; p++) {
 		grid_index = p_grid.id_list(p);
 		i = grid_index[0];
 		j = grid_index[1];
-		myfile << scientific << setprecision(16) << p_grid.origin[0] + i * p_grid.dx << ' ' << p_grid.origin[1] + j * p_grid.dx << ' ' << p_grid.data[p] << ' ' << u_grid.data[p] << ' ' << v_grid.data[p] << endl;
+		myfile << std::scientific << std::setprecision(16) << p_grid.origin[0] + i * p_grid.dx << ' ' << p_grid.origin[1] + j * p_grid.dx << ' ' << p_grid.data[p] << ' ' << u_grid.data[p] << ' ' << v_grid.data[p] << endl;
 	}
 	myfile.close();
 }

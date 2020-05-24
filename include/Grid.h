@@ -4,8 +4,8 @@
 #include <vector>
 #include <Eigen>
 
-using Index = std::array<int, 2>;
-using Vec2d = std::array<double, 2>;
+typedef std::array<int, 2> Index;
+typedef std::array<double, 2> Vec2d;
 
 template<typename T>
 class Grid {					// sparse grid for pressure and velocity
