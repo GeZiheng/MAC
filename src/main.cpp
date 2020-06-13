@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <GL/glut.h>
-#include "Parameters.h"
 #include "Simulator.h"
 
 using namespace std;
